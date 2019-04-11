@@ -1,0 +1,1 @@
+CREATE OR REPLACE VIEW api20_corp_mst as select * from api20ninsyo.api20_corp_mst;

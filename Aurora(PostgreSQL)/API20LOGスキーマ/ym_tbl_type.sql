@@ -1,0 +1,1 @@
+CREATE DOMAIN api20log.ym_tbl_type AS CHARACTER VARYING(6) [];

@@ -1,0 +1,1 @@
+CREATE DOMAIN api20ninsyo.func_split_type AS CHARACTER VARYING(1000) [];

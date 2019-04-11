@@ -1,0 +1,1323 @@
+● API2.0 ログ集計結果参照プロシージャ パラメータ
+
+---------------------------------------------------------------------------------------------------------------
+-- API企業検索
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_API_CORP (
+  i_cid		in	varchar2,		-- 企業ID
+  i_cname	in	varchar2,		-- 企業名
+  i_pos		in	number,			-- 取得位置（null時:1）
+  i_cnt		in	number,			-- 取得件数（null時:999999）
+  o_rtncd	out	number,			-- リターンコード（0:正常終了、0以外:異常終了）
+  o_cnt		out	number,			-- 全データ件数
+  o_info	out	tbl_type		-- 検索情報（企業ID, 企業名）
+); 
+
+
+---------------------------------------------------------------------------------------------------------------
+-- APIグループ名検索
+---------------------------------------------------------------------------------------------------------------
+procedure P_GET_API_GRP (
+  i_pos		in	number,			-- 取得位置
+  i_cnt		in	number,			-- 取得件数
+  o_rtncd	out	number,			-- リターンコード
+  o_cnt		out	number,			-- 全データ件数
+  o_info	out	tbl_type		-- 検索情報（グループ名）
+);
+
+
+---------------------------------------------------------------------------------------------------------------
+-- 日別アクセス件数取得
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_DATE (
+  i_cid		in	varchar2,		-- 企業ID
+  i_kbn		in	varchar2,		-- 検索区分（T:全体、S:サマリー、G:機能グループ名、F:機能名）
+  i_month	in	varchar2,		-- 検索期間（1:１ヶ月、3:３ヶ月）
+  i_ym		in	varchar2,		-- 検索年月（yyyymm）
+  i_grp		in	varchar2,		-- 機能グループ名（検索区分がGの時必須）or 機能名（検索区分がFの時必須）
+  i_ssl		in	varchar2,		-- SSL区分（1:SSL利用件数、0:非SSL利用件数、T:全利用件数）
+  i_pos		in	number,			-- 取得位置
+  i_cnt		in	number,			-- 取得件数
+  o_rtncd	out	number,			-- リターンコード
+  o_cnt		out	number,			-- 全データ件数
+  o_min_ym	out	varchar2,		-- 最小年月（yyyymm）
+  o_max_ym	out	varchar2,		-- 最大年月（yyyymm）
+  o_gokei	out	number,			-- 合計リクエスト数
+  o_avg		out	number,			-- 平均リクエスト数
+  o_info	out	tbl_type		-- 検索情報（API名, 合計, 割合, 1日～31日）
+); 
+
+
+---------------------------------------------------------------------------------------------------------------
+-- 時間帯別アクセス件数取得
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_TIME (
+  i_cid		in	varchar2,		-- 企業ID
+  i_kbn		in	varchar2,		-- 検索区分（T:全体、S:サマリー、G:機能グループ名、F:機能名））
+  i_month	in	varchar2,		-- 検索期間（1:１ヶ月、3:３ヶ月）
+  i_ym		in	varchar2,		-- 検索年月（yyyymm）
+  i_grp		in	varchar2,		-- 機能グループ名（検索区分がGの時必須）or 機能名（検索区分がFの時必須）
+  i_ssl		in	varchar2,		-- SSL区分（1:SSL利用件数、0:非SSL利用件数、T:全利用件数）
+  i_pos		in	number,			-- 取得位置
+  i_cnt		in	number,			-- 取得件数
+  o_rtncd	out	number,			-- リターンコード
+  o_cnt		out	number,			-- 全データ件数
+  o_min_ym	out	varchar2,		-- 最小年月（yyyymm）
+  o_max_ym	out	varchar2,		-- 最大年月（yyyymm）
+  o_gokei	out	number,			-- 合計リクエスト数
+  o_avg		out	number,			-- 平均リクエスト数
+  o_info	out	tbl_type		-- 検索情報（API名, 日合計, 割合, 00時～23時）
+); 
+
+
+---------------------------------------------------------------------------------------------------------------
+-- 日指定時間帯別アクセス件数取得
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_TIME_FUNC (
+  i_cid		in	varchar2,		-- 企業ID
+  i_kbn		in	varchar2,		-- 検索区分（T:全体、S:サマリー、G:機能グループ名、F:機能名））
+  i_ymd		in	varchar2,		-- 検索年月日（yyyymmdd）
+  i_func	in	varchar2,		-- 機能名 or 機能グループ名（検索区分に従う）
+  i_ssl		in	varchar2,		-- SSL区分（1:SSL利用件数、0:非SSL利用件数、T:全利用件数）
+  i_pos		in	number,			-- 取得位置
+  i_cnt		in	number,			-- 取得件数
+  o_rtncd	out	number,			-- リターンコード
+  o_cnt		out	number,			-- 全データ件数
+  o_gokei	out	number,			-- 合計リクエスト数
+  o_avg		out	number,			-- 平均リクエスト数
+  o_info	out	tbl_type		-- 検索情報（API名, 日合計, 割合, 00時～23時）
+); 
+
+
+---------------------------------------------------------------------------------------------------------------
+-- ホスト別アクセス件数取得
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_HOST (
+  i_cid		in	varchar2,		-- 企業ID
+  i_month	in	varchar2,		-- 検索期間（1:１ヶ月、3:３ヶ月）
+  i_ym		in	varchar2,		-- 検索年月（yyyymm）
+  i_order	in	number,			-- 検索順位（1～指定順位まで出力される）
+  i_pos		in	number,			-- 取得位置（null時:1）
+  i_cnt		in	number,			-- 取得件数（null時:999999）
+  o_rtncd	out	number,			-- リターンコード（0:正常終了、0以外:異常終了）
+  o_cnt		out	number,			-- 全データ件数
+  o_info	out	tbl_type		-- 検索情報（順位, ホスト名, リクエスト数）
+); 
+
+
+---------------------------------------------------------------------------------------------------------------
+-- 無償版API月別アクセス件数取得
+---------------------------------------------------------------------------------------------------------------
+p_api_log_pkg.P_GET_FAPI (
+  i_cid		in	varchar2,		-- 企業ID
+  i_ym		in	varchar2,		-- 検索年月（yyyymm）
+  i_pos		in	number,			-- 取得位置
+  i_cnt		in	number,			-- 取得件数
+  o_rtncd	out	number,			-- リターンコード
+  o_cnt		out	number,			-- 全データ件数
+  o_info	out	tbl_type		-- 検索情報（企業ID, 合計）
+);
+
+
+● プロシージャテストコマンド
+
+--
+-- API企業検索
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_API_CORP(null, null, null, null, o_rtncd, o_cnt, o_info);
+
+  dbms_output.put_line('RTNCD=' || o_rtncd);
+  dbms_output.put_line('CNT=' || o_cnt);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=9
+-----------------------------------
+cid:"CID_HOSOYA",cname:"HOSOYA_TEST"
+cid:"JSZ3a5f0388d844",cname:"iコンシェル開発用"
+cid:"TEST",cname:"ネクスト"
+cid:"JSZae64218628b3",cname:"ラボ用"
+cid:"JSZ72420bc9e767",cname:"株式会社エヌ・ティ・ティ・ドコモ"
+cid:"JSZ560635a28ba6",cname:"監視用"
+cid:"JSZ989f008c73d4",cname:"拠点案内"
+cid:"JSZ52d6675e9ffa",cname:"本番用テストデータ"
+cid:"JSZ752c40ded32d",cname:"本番用テストデータ"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- APIグループ名検索
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_API_GRP(null, null, o_rtncd, o_cnt, o_info);
+
+  dbms_output.put_line('RTNCD=' || o_rtncd);
+  dbms_output.put_line('CNT=' || o_cnt);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+-----------------------------------
+grp_name:"住所検索"
+grp_name:"POI検索"
+grp_name:"緯度経度検索"
+grp_name:"ルート探索"
+grp_name:"その他"
+grp_name:"APIロード"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（全体_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'T', '1', '201108', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201108
+MAX_YM=201108
+GOKEI=3071
+AVG=99
+-----------------------------------
+api:"全体",total:"3071",rate:"100",dd01:"446",dd02:"425",dd03:"524",dd04:"449",dd05:"335",dd06:"282",dd07:"203",dd08:"407",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（全体_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'T', '3', '201207', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201205
+MAX_YM=201207
+GOKEI=0
+AVG=0
+-----------------------------------
+api:"全体",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0"
+
+
+----------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（サマリー_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'S', '1', '201106', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+MIN_YM=201106
+MAX_YM=201106
+GOKEI=669
+AVG=22
+-----------------------------------
+api:"住所検索",total:"174",rate:"26",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"23",dd21:"98",dd22:"53",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"POI検索",total:"3",rate:".4",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"3",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"緯度経度検索",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"ルート探索",total:"9",rate:"1.3",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"4",dd21:"5",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"その他",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"APIロード",total:"483",rate:"72.2",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"99",dd21:"302",dd22:"39",dd23:"0",dd24:"20",dd25:"0",dd26:"0",dd27:"22",dd28:"0",dd29:"0",dd30:"1"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（サマリー_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'S', '3', '201106', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+MIN_YM=201104
+MAX_YM=201106
+GOKEI=669
+AVG=22
+-----------------------------------
+api:"住所検索",total:"174",rate:"26",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"23",dd21:"98",dd22:"53",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"POI検索",total:"3",rate:".4",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"3",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"緯度経度検索",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"ルート探索",total:"9",rate:"1.3",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"4",dd21:"5",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"その他",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"APIロード",total:"483",rate:"72.2",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"99",dd21:"302",dd22:"39",dd23:"0",dd24:"20",dd25:"0",dd26:"0",dd27:"22",dd28:"0",dd29:"0",dd30:"1"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（機能grp別_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'G', '1', '201106', 'ルート探索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=2
+MIN_YM=201106
+MAX_YM=201106
+GOKEI=9
+AVG=0
+-----------------------------------
+api:"自動車ルート探索",total:"9",rate:"100",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"4",dd21:"5",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+api:"歩行者ルート探索",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（機能grp別_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'G', '3', '201107', 'ルート探索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=2
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=9
+AVG=9
+-----------------------------------
+api:"自動車ルート探索",total:"9",rate:"100",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"4",dd21:"5",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0"
+api:"歩行者ルート探索",total:"0",rate:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（機能別_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'F', '1', '201107', '文字列で住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201107
+MAX_YM=201107
+GOKEI=6922
+AVG=223
+-----------------------------------
+api:"文字列で住所検索",total:"6922",rate:"100",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"46",dd06:"408",dd07:"253",dd08:"241",dd09:"108",dd10:"115",dd11:"293",dd12:"257",dd13:"286",dd14:"315",dd15:"321",dd16:"133",dd17:"107",dd18:"140",dd19:"326",dd20:"303",dd21:"412",dd22:"325",dd23:"227",dd24:"189",dd25:"427",dd26:"318",dd27:"366",dd28:"364",dd29:"286",dd30:"158",dd31:"198"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日別アクセス件数取得（機能別_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_DATE(null, 'F', '3', '201107', '文字列で住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=7096
+AVG=116
+-----------------------------------
+api:"文字列で住所検索",total:"7096",rate:"100",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"0",dd21:"0",dd22:"0",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd31:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"0",dd06:"0",dd07:"0",dd08:"0",dd09:"0",dd10:"0",dd11:"0",dd12:"0",dd13:"0",dd14:"0",dd15:"0",dd16:"0",dd17:"0",dd18:"0",dd19:"0",dd20:"23",dd21:"98",dd22:"53",dd23:"0",dd24:"0",dd25:"0",dd26:"0",dd27:"0",dd28:"0",dd29:"0",dd30:"0",dd01:"0",dd02:"0",dd03:"0",dd04:"0",dd05:"46",dd06:"408",dd07:"253",dd08:"241",dd09:"108",dd10:"115",dd11:"293",dd12:"257",dd13:"286",dd14:"315",dd15:"321",dd16:"133",dd17:"107",dd18:"140",dd19:"326",dd20:"303",dd21:"412",dd22:"325",dd23:"227",dd24:"189",dd25:"427",dd26:"318",dd27:"366",dd28:"364",dd29:"286",dd30:"158",dd31:"198"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（全体_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'T', '1', '201106', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201106
+MAX_YM=201106
+GOKEI=669
+AVG=28
+-----------------------------------
+api:"全体",total:"669",rate:"100",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"5",hh10:"21",hh11:"15",hh12:"11",hh13:"29",hh14:"66",hh15:"61",hh16:"178",hh17:"89",hh18:"102",hh19:"75",hh20:"17",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（全体_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'T', '3', '201107', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=9542
+AVG=398
+-----------------------------------
+api:"全体",total:"9542",rate:"100",hh00:"88",hh01:"38",hh02:"26",hh03:"32",hh04:"18",hh05:"13",hh06:"22",hh07:"99",hh08:"262",hh09:"567",hh10:"685",hh11:"726",hh12:"470",hh13:"708",hh14:"869",hh15:"963",hh16:"1013",hh17:"921",hh18:"654",hh19:"548",hh20:"301",hh21:"240",hh22:"150",hh23:"129"
+
+
+
+----------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（サマリー_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'S', '1', '201107', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+MIN_YM=201107
+MAX_YM=201107
+GOKEI=8873
+AVG=370
+-----------------------------------
+api:"住所検索",total:"6922",rate:"78",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"441",hh10:"537",hh11:"566",hh12:"372",hh13:"544",hh14:"582",hh15:"641",hh16:"658",hh17:"605",hh18:"433",hh19:"349",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+api:"POI検索",total:"1727",rate:"19.5",hh00:"2",hh01:"1",hh02:"1",hh03:"0",hh04:"1",hh05:"1",hh06:"3",hh07:"10",hh08:"35",hh09:"95",hh10:"118",hh11:"137",hh12:"79",hh13:"135",hh14:"203",hh15:"261",hh16:"166",hh17:"126",hh18:"112",hh19:"100",hh20:"81",hh21:"26",hh22:"13",hh23:"21"
+api:"緯度経度検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"ルート探索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"その他",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"APIロード",total:"224",rate:"2.5",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"12",hh09:"26",hh10:"9",hh11:"8",hh12:"8",hh13:"0",hh14:"18",hh15:"0",hh16:"11",hh17:"101",hh18:"7",hh19:"24",hh20:"0",hh21:"0",hh22:"0",hh23:"0
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（サマリー_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'S', '3', '201107', null, 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=9542
+AVG=398
+-----------------------------------
+api:"住所検索",total:"7096",rate:"74.4",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"445",hh10:"544",hh11:"570",hh12:"374",hh13:"544",hh14:"586",hh15:"655",hh16:"703",hh17:"634",hh18:"480",hh19:"367",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+api:"POI検索",total:"1730",rate:"18.1",hh00:"2",hh01:"1",hh02:"1",hh03:"0",hh04:"1",hh05:"1",hh06:"3",hh07:"10",hh08:"35",hh09:"95",hh10:"118",hh11:"137",hh12:"81",hh13:"135",hh14:"204",hh15:"261",hh16:"166",hh17:"126",hh18:"112",hh19:"100",hh20:"81",hh21:"26",hh22:"13",hh23:"21"
+api:"緯度経度検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"ルート探索",total:"9",rate:".1",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"8",hh14:"1",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"その他",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"APIロード",total:"707",rate:"7.4",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"12",hh09:"27",hh10:"23",hh11:"19",hh12:"15",hh13:"21",hh14:"78",hh15:"47",hh16:"144",hh17:"161",hh18:"62",hh19:"81",hh20:"17",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（機能grp別_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'G', '1', '201107', '住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=4
+MIN_YM=201107
+MAX_YM=201107
+GOKEI=6922
+AVG=288
+-----------------------------------
+api:"文字列で住所検索",total:"6922",rate:"100",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"441",hh10:"537",hh11:"566",hh12:"372",hh13:"544",hh14:"582",hh15:"641",hh16:"658",hh17:"605",hh18:"433",hh19:"349",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+api:"郵便番号で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"緯度経度で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"住所コードで住所リスト検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（機能grp別_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'G', '3', '201107', '住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=4
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=7096
+AVG=296
+-----------------------------------
+api:"文字列で住所検索",total:"7096",rate:"100",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"445",hh10:"544",hh11:"570",hh12:"374",hh13:"544",hh14:"586",hh15:"655",hh16:"703",hh17:"634",hh18:"480",hh19:"367",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+api:"郵便番号で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"緯度経度で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"住所コードで住所リスト検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（機能別_1ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'F', '1', '201107', '文字列で住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201107
+MAX_YM=201107
+GOKEI=6922
+AVG=288
+-----------------------------------
+api:"文字列で住所検索",total:"6922",rate:"100",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"441",hh10:"537",hh11:"566",hh12:"372",hh13:"544",hh14:"582",hh15:"641",hh16:"658",hh17:"605",hh18:"433",hh19:"349",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 時間帯別アクセス件数取得（機能別_3ヶ月_日別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_min_ym	varchar2(6);
+  o_max_ym	varchar2(6);
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME(null, 'F', '3', '201107', '文字列で住所検索', 'T', null, null, o_rtncd, o_cnt, o_min_ym, o_max_ym, o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('MIN_YM=' || o_min_ym);
+  dbms_output.put_line('MAX_YM=' || o_max_ym);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+MIN_YM=201105
+MAX_YM=201107
+GOKEI=7096
+AVG=296
+-----------------------------------
+api:"文字列で住所検索",total:"7096",rate:"100",hh00:"86",hh01:"37",hh02:"25",hh03:"32",hh04:"17",hh05:"12",hh06:"19",hh07:"89",hh08:"215",hh09:"445",hh10:"544",hh11:"570",hh12:"374",hh13:"544",hh14:"586",hh15:"655",hh16:"703",hh17:"634",hh18:"480",hh19:"367",hh20:"203",hh21:"214",hh22:"137",hh23:"108"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日指定時間帯別アクセス件数取得（機能別_時間帯別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME_FUNC(null, 'F', '20120712', '文字列で住所検索', 'T', null, null, o_rtncd, o_cnt,o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+GOKEI=0
+AVG=0
+-----------------------------------
+api:"文字列で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日指定時間帯別アクセス件数取得（機能グループ別_時間帯別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME_FUNC(null, 'G', '20110725', '住所検索', 'T', null, null, o_rtncd, o_cnt,o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=4
+GOKEI=427
+AVG=18
+-----------------------------------
+api:"緯度経度で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"住所コードで住所リスト検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"文字列で住所検索",total:"427",rate:"100",hh00:"3",hh01:"0",hh02:"0",hh03:"1",hh04:"1",hh05:"1",hh06:"0",hh07:"0",hh08:"9",hh09:"25",hh10:"52",hh11:"27",hh12:"28",hh13:"39",hh14:"35",hh15:"27",hh16:"83",hh17:"53",hh18:"10",hh19:"20",hh20:"5",hh21:"3",hh22:"2",hh23:"3"
+api:"郵便番号で住所検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日指定時間帯別アクセス件数取得（サマリー_時間帯別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME_FUNC(null, 'S', '20110711', null, 'T', null, null, o_rtncd, o_cnt,o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=6
+GOKEI=332
+AVG=14
+-----------------------------------
+api:"住所検索",total:"293",rate:"88.3",hh00:"1",hh01:"0",hh02:"1",hh03:"0",hh04:"2",hh05:"0",hh06:"3",hh07:"2",hh08:"12",hh09:"26",hh10:"28",hh11:"14",hh12:"21",hh13:"6",hh14:"14",hh15:"23",hh16:"34",hh17:"12",hh18:"24",hh19:"29",hh20:"13",hh21:"19",hh22:"7",hh23:"2"
+api:"POI検索",total:"33",rate:"9.9",hh00:"1",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"1",hh07:"0",hh08:"2",hh09:"5",hh10:"2",hh11:"2",hh12:"0",hh13:"3",hh14:"4",hh15:"0",hh16:"5",hh17:"2",hh18:"1",hh19:"3",hh20:"0",hh21:"1",hh22:"0",hh23:"1"
+api:"緯度経度検索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"ルート探索",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"その他",total:"0",rate:"0",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"0",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+api:"APIロード",total:"6",rate:"1.8",hh00:"0",hh01:"0",hh02:"0",hh03:"0",hh04:"0",hh05:"0",hh06:"0",hh07:"0",hh08:"0",hh09:"0",hh10:"0",hh11:"0",hh12:"0",hh13:"0",hh14:"0",hh15:"0",hh16:"0",hh17:"6",hh18:"0",hh19:"0",hh20:"0",hh21:"0",hh22:"0",hh23:"0"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 日指定時間帯別アクセス件数取得（全体_時間帯別）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_gokei	number;
+  o_avg		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_TIME_FUNC(null, 'T', '20110711', null, 'T', null, null, o_rtncd, o_cnt,o_gokei, o_avg, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  dbms_output.put_line('GOKEI='  || o_gokei);
+  dbms_output.put_line('AVG='    || o_avg);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=1
+GOKEI=332
+AVG=14
+-----------------------------------
+api:"全体",total:"332",rate:"100",hh00:"2",hh01:"0",hh02:"1",hh03:"0",hh04:"2",hh05:"0",hh06:"4",hh07:"2",hh08:"14",hh09:"31",hh10:"30",hh11:"16",hh12:"21",hh13:"9",hh14:"18",hh15:"23",hh16:"39",hh17:"20",hh18:"25",hh19:"32",hh20:"13",hh21:"20",hh22:"7",hh23:"3"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- ホスト別アクセス件数取得（ホスト別_1ヶ月）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_HOST(null, '1', '201107', 5, null, null, o_rtncd, o_cnt, o_info);
+
+  dbms_output.put_line('RTNCD=' || o_rtncd);
+  dbms_output.put_line('CNT=' || o_cnt);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=5
+-----------------------------------
+rank:"1",host:"210.173.156.156",cnt:"542"
+rank:"2",host:"58.90.6.235",cnt:"436"
+rank:"3",host:"125.200.105.16",cnt:"306"
+rank:"4",host:"113.157.205.196",cnt:"269"
+rank:"5",host:"218.225.89.15",cnt:"208"
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- ホスト別アクセス件数取得（ホスト別_3ヶ月）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_HOST(null, '3', '201107', 10, null, null, o_rtncd, o_cnt, o_info);
+
+  dbms_output.put_line('RTNCD=' || o_rtncd);
+  dbms_output.put_line('CNT=' || o_cnt);
+
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+
+RTNCD=0
+CNT=10
+-----------------------------------
+rank:"1",host:"210.173.156.156",cnt:"542"
+rank:"2",host:"58.90.6.235",cnt:"436"
+rank:"3",host:"172.16.171.11",cnt:"392"
+rank:"4",host:"218.225.89.15",cnt:"375"
+rank:"5",host:"125.200.105.16",cnt:"306"
+rank:"6",host:"113.157.205.196",cnt:"269"
+rank:"7",host:"210.133.103.162",cnt:"230"
+rank:"8",host:"202.214.242.113",cnt:"159"
+rank:"9",host:"124.45.158.79",cnt:"145"
+rank:"10",host:"219.165.203.33",cnt:"130"
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--
+-- 無償版API月別アクセス件数取得）
+--
+set serveroutput on
+declare
+  o_rtncd	number;
+  o_cnt		number;
+  o_info	p_api_log_pkg.tbl_type;
+
+begin
+  p_api_log_pkg.P_GET_FAPI(null, '201411',null, null, o_rtncd, o_cnt, o_info);
+
+  dbms_output.put_line('RTNCD='  || o_rtncd);
+  dbms_output.put_line('CNT='    || o_cnt);
+  if o_cnt > 0 then
+    dbms_output.put_line('-----------------------------------');
+    for i in o_info.first..o_info.last loop
+      dbms_output.put_line(o_info(i));
+    end loop;
+  end if;
+end;
+/
+
+
+
+● 実行結果例）
+RTNCD=0
+CNT=2
+-----------------------------------
+cid:"JSZ5c74e9271d81",total:"584479"
+cid:"JSZbd26a930ddd0",total:"204018"
